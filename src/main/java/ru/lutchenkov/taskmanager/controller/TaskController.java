@@ -30,19 +30,15 @@ public class TaskController {
         List<TaskDto> tasks = taskService.getAllTasks().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(tasks); // Возвращает статус 200 OK
+        return ResponseEntity.ok(tasks);
     }
 
-    // 2. Получить задачу по ID
     @GetMapping("/{id}")
     public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id) {
-        // Если Optional пустой - возвращаем 404 Not Found, иначе 200 OK
-        return taskService.getTaskById(id)
-                .map(task -> ResponseEntity.ok(mapToDto(task)))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        Task task = taskService.getTaskById(id); // Если задачи нет, отсюда вылетит ошибка в Главврача
+        return ResponseEntity.ok(mapToDto(task));
     }
 
-    // 3. Создать новую задачу
     @PostMapping
     public ResponseEntity<TaskDto> createTask(@Valid @RequestBody CreateTaskRequest request) {
         // Маппинг: Создаем Entity из того, что прислал клиент
@@ -53,32 +49,27 @@ public class TaskController {
         // Отдаем сервису на сохранение
         Task createdTask = taskService.createTask(task);
 
-        // Возвращаем статус 201 Created и готовый DTO
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToDto(createdTask));
     }
 
-    // 4. Обновить задачу
     @PutMapping("/{id}")
-    public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @Valid @RequestBody UpdateTaskRequest request) {
+    public Task updateTask(@PathVariable Long id, @Valid @RequestBody UpdateTaskRequest request) {
         Task taskData = new Task();
         taskData.setTitle(request.getTitle());
         taskData.setDescription(request.getDescription());
         taskData.setStatus(request.getStatus());
 
-        return taskService.updateTask(id, taskData)
-                .map(updatedTask -> ResponseEntity.ok(mapToDto(updatedTask)))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        return taskService.updateTask(id, taskData);
     }
 
-    // 5. Удалить задачу
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        if (taskService.deleteTask(id)) {
-            // Если удалилось, возвращаем 204 No Content (успех, но тела ответа нет)
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        // Просто вызываем удаление.
+        // Если задачи нет, отсюда вылетит ошибка, и выполнение метода прервется.
+        taskService.deleteTask(id);
+
+        // Если мы дошли до этой строчки, значит ошибка не вылетела и задача успешно удалена!
+        return ResponseEntity.noContent().build();
     }
 
     // =======================================================
