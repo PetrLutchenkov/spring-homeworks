@@ -1,6 +1,7 @@
 package ru.lutchenkov.taskmanager.service;
 
 import org.springframework.stereotype.Service;
+import ru.lutchenkov.taskmanager.annotation.Auditable;
 import ru.lutchenkov.taskmanager.exception.TaskNotFoundException;
 import ru.lutchenkov.taskmanager.model.Task;
 import ru.lutchenkov.taskmanager.model.TaskStatus;
@@ -32,6 +33,7 @@ public class TaskService {
         return task;
     }
 
+    @Auditable
     public Task createTask(Task task) {
         Long newId = idGenerator.getAndIncrement();
         task.setId(newId);
@@ -65,6 +67,7 @@ public class TaskService {
         return existingTask;
     }
 
+    @Auditable
     public void deleteTask(Long id) {
         Task removedTask = taskRepository.remove(id);
         if (removedTask == null) {
