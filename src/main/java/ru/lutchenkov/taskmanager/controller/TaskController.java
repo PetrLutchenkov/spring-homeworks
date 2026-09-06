@@ -23,30 +23,27 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    // 1. Получить все задачи
     @GetMapping
     public ResponseEntity<List<TaskDto>> getAllTasks() {
-        // Достаем сущности из сервиса, превращаем каждую в DTO и собираем в список
         List<TaskDto> tasks = taskService.getAllTasks().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+
         return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskDto> getTaskById(@PathVariable Long id) {
-        Task task = taskService.getTaskById(id); // Если задачи нет, отсюда вылетит ошибка в Главврача
+        Task task = taskService.getTaskById(id);
         return ResponseEntity.ok(mapToDto(task));
     }
 
     @PostMapping
     public ResponseEntity<TaskDto> createTask(@Valid @RequestBody CreateTaskRequest request) {
-        // Маппинг: Создаем Entity из того, что прислал клиент
         Task task = new Task();
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
 
-        // Отдаем сервису на сохранение
         Task createdTask = taskService.createTask(task);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToDto(createdTask));
@@ -64,17 +61,11 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
-        // Просто вызываем удаление.
-        // Если задачи нет, отсюда вылетит ошибка, и выполнение метода прервется.
         taskService.deleteTask(id);
 
-        // Если мы дошли до этой строчки, значит ошибка не вылетела и задача успешно удалена!
         return ResponseEntity.noContent().build();
     }
 
-    // =======================================================
-    // Вспомогательный метод (Маппер) для превращения Entity в DTO
-    // =======================================================
     private TaskDto mapToDto(Task task) {
         TaskDto dto = new TaskDto();
         dto.setId(task.getId());
@@ -82,6 +73,7 @@ public class TaskController {
         dto.setDescription(task.getDescription());
         dto.setStatus(task.getStatus());
         dto.setCreatedAt(task.getCreatedAt());
+
         return dto;
     }
 }

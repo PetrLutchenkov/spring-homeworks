@@ -18,7 +18,6 @@ public class TaskService {
 
     private final Map<Long, Task> taskRepository = new ConcurrentHashMap<>();
 
-    // Потокобезопасный генератор уникальных ID (заменяет нам автоинкремент в БД)
     private final AtomicLong idGenerator = new AtomicLong(1);
 
     public List<Task> getAllTasks() {
@@ -39,31 +38,28 @@ public class TaskService {
         task.setId(newId);
         task.setCreatedAt(LocalDateTime.now());
 
-        // Если клиент не передал статус, по умолчанию задача получает статус TODO
         if (task.getStatus() == null) {
             task.setStatus(TaskStatus.TODO);
         }
 
-        taskRepository.put(newId, task); // Сохраняем в нашу "базу"
+        taskRepository.put(newId, task);
+
         return task;
     }
 
     public Task updateTask(Long id, Task updatedTaskData) {
-        // Если задачи нет — выбрасываем исключение
         if (!taskRepository.containsKey(id)) {
             throw new TaskNotFoundException(id);
         }
 
         Task existingTask = taskRepository.get(id);
 
-        // Обновляем только разрешенные поля (тут твой код не меняется)
         existingTask.setTitle(updatedTaskData.getTitle());
         existingTask.setDescription(updatedTaskData.getDescription());
         if (updatedTaskData.getStatus() != null) {
             existingTask.setStatus(updatedTaskData.getStatus());
         }
 
-        // Возвращаем просто объект, без Optional
         return existingTask;
     }
 

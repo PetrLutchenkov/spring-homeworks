@@ -20,19 +20,19 @@ public class LoggingAspect {
     public void logBefore(JoinPoint joinPoint) {
         String methodName = joinPoint.getSignature().getName();
         Object[] args = joinPoint.getArgs();
-        log.info("→ Вызов метода: {} с аргументами: {}", methodName, Arrays.toString(args));
+        log.info("Вызов метода: {} с аргументами: {}", methodName, Arrays.toString(args));
     }
 
     @AfterReturning(pointcut = "serviceMethods()", returning = "result")
     public void logAfterReturning(JoinPoint joinPoint, Object result) {
         String methodName = joinPoint.getSignature().getName();
-        log.info("← Метод {} успешно завершен. Вернул: {}", methodName, result);
+        log.info("Метод {} успешно завершен. Вернул: {}", methodName, result);
     }
 
     @AfterThrowing(pointcut = "serviceMethods()", throwing = "ex")
     public void logAfterThrowing(JoinPoint joinPoint, Exception ex) {
         String methodName = joinPoint.getSignature().getName();
-        log.error("✗ Ошибка в методе {}: {}", methodName, ex.getMessage());
+        log.error("Ошибка в методе {}: {}", methodName, ex.getMessage());
     }
 
     @Around("serviceMethods()")
@@ -43,7 +43,7 @@ public class LoggingAspect {
 
         long durationNs = System.nanoTime() - start;
         double durationMs = durationNs / 1_000_000.0;
-        log.info("⏱ Метод {} выполнялся {} мс",
+        log.info("Метод {} выполнялся {} мс",
                 joinPoint.getSignature().getName(),
                 String.format("%.2f", durationMs));
 

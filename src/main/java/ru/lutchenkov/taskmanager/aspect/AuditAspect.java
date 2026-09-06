@@ -19,6 +19,6 @@ public class AuditAspect {
         String methodName = joinPoint.getSignature().getName();
         LocalDateTime time = LocalDateTime.now();
 
-        log.info("🛡️ [AUDIT] Пользователь: '{}' | Метод: '{}' | Время: {}", user, methodName, time);
+        log.info("[AUDIT] Пользователь: '{}' | Метод: '{}' | Время: {}", user, methodName, time);
     }
 }

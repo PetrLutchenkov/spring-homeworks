@@ -15,10 +15,8 @@ public class ErrorResponse {
     private LocalDateTime timestamp;
     private String path;
 
-    // Дополнительное поле специально для ошибок валидации
     private List<String> validationErrors;
 
-    // Конструктор для обычных ошибок (без валидации)
     public ErrorResponse(String message, String errorCode, int status, String path) {
         this.message = message;
         this.errorCode = errorCode;
