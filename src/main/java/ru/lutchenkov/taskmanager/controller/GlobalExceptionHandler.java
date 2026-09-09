@@ -9,6 +9,7 @@ import ru.lutchenkov.taskmanager.dto.ErrorResponse;
 import ru.lutchenkov.taskmanager.exception.TaskNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import ru.lutchenkov.taskmanager.exception.TooManyRequestsException;
 
 import java.util.List;
 
@@ -25,6 +26,17 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<ErrorResponse> handleTooManyRequestsException(TooManyRequestsException ex, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                ex.getMessage(),
+                "TOO_MANY_REQUESTS",
+                HttpStatus.TOO_MANY_REQUESTS.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(errorResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
