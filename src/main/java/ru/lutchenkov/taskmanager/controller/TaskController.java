@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.lutchenkov.taskmanager.annotation.RateLimit;
 import ru.lutchenkov.taskmanager.dto.CreateTaskRequest;
 import ru.lutchenkov.taskmanager.dto.TaskDto;
 import ru.lutchenkov.taskmanager.dto.UpdateTaskRequest;
@@ -23,6 +24,7 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @RateLimit(key = "get_all_tasks_limit", requestsPerMinute = 100)
     @GetMapping
     public ResponseEntity<List<TaskDto>> getAllTasks() {
         List<TaskDto> tasks = taskService.getAllTasks().stream()
@@ -38,6 +40,7 @@ public class TaskController {
         return ResponseEntity.ok(mapToDto(task));
     }
 
+    @RateLimit(key = "create_task_limit", requestsPerMinute = 10)
     @PostMapping
     public ResponseEntity<TaskDto> createTask(@Valid @RequestBody CreateTaskRequest request) {
         Task task = new Task();
