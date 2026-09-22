@@ -36,7 +36,7 @@ public class RateLimitAspect {
         }
 
         if (queue.size() >= limit) {
-            throw new TooManyRequestsException("Превышен лимит запросов. Попробуйте позже.");
+            throw new TooManyRequestsException("Превышен лимит запросов. Попробуйте позже");
         }
 
         queue.add(currentTime);
