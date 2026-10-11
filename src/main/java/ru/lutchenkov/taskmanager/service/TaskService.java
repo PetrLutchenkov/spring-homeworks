@@ -1,6 +1,6 @@
 package ru.lutchenkov.taskmanager.service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.lutchenkov.taskmanager.annotation.Auditable;
@@ -47,7 +47,7 @@ public class TaskService {
             existingTask.setStatus(updatedTask.getStatus());
         }
 
-        return taskRepository.save(existingTask);
+        return existingTask;
     }
 
     @Auditable

@@ -4,6 +4,7 @@ import lombok.Data;
 import ru.lutchenkov.taskmanager.model.TaskStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class TaskDto {
@@ -12,4 +13,7 @@ public class TaskDto {
     private String description;
     private TaskStatus status;
     private LocalDateTime createdAt;
+    private Long assigneeId;
+    private String assigneeName;
+    private List<String> tags;
 }

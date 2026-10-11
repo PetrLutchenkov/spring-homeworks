@@ -11,6 +11,7 @@ import ru.lutchenkov.taskmanager.exception.TaskNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import ru.lutchenkov.taskmanager.exception.TooManyRequestsException;
+import ru.lutchenkov.taskmanager.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -19,6 +20,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TaskNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleTaskNotFound(TaskNotFoundException ex, HttpServletRequest request) {
+        ErrorResponse response = new ErrorResponse(
+                ex.getMessage(),
+                ex.getErrorCode(),
+                HttpStatus.NOT_FOUND.value(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException ex, HttpServletRequest request) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
                 ex.getErrorCode(),

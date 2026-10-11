@@ -1,6 +1,7 @@
 package ru.lutchenkov.taskmanager.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +9,7 @@ import ru.lutchenkov.taskmanager.annotation.RateLimit;
 import ru.lutchenkov.taskmanager.dto.CreateTaskRequest;
 import ru.lutchenkov.taskmanager.dto.TaskDto;
 import ru.lutchenkov.taskmanager.dto.UpdateTaskRequest;
+import ru.lutchenkov.taskmanager.model.Tag;
 import ru.lutchenkov.taskmanager.model.Task;
 import ru.lutchenkov.taskmanager.service.TaskService;
 
@@ -16,13 +18,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
+@RequiredArgsConstructor
 public class TaskController {
 
     private final TaskService taskService;
-
-    public TaskController(TaskService taskService) {
-        this.taskService = taskService;
-    }
 
     @RateLimit(key = "get_all_tasks_limit", requestsPerMinute = 100)
     @GetMapping
@@ -48,24 +47,23 @@ public class TaskController {
         task.setDescription(request.getDescription());
 
         Task createdTask = taskService.createTask(task);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToDto(createdTask));
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Long id, @Valid @RequestBody UpdateTaskRequest request) {
+    public ResponseEntity<TaskDto> updateTask(@PathVariable Long id, @Valid @RequestBody UpdateTaskRequest request) {
         Task taskData = new Task();
         taskData.setTitle(request.getTitle());
         taskData.setDescription(request.getDescription());
         taskData.setStatus(request.getStatus());
 
-        return taskService.updateTask(id, taskData);
+        Task updatedTask = taskService.updateTask(id, taskData);
+        return ResponseEntity.ok(mapToDto(updatedTask));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
-
         return ResponseEntity.noContent().build();
     }
 
@@ -76,6 +74,17 @@ public class TaskController {
         dto.setDescription(task.getDescription());
         dto.setStatus(task.getStatus());
         dto.setCreatedAt(task.getCreatedAt());
+
+        if (task.getAssignee() != null) {
+            dto.setAssigneeId(task.getAssignee().getId());
+            dto.setAssigneeName(task.getAssignee().getUsername());
+        }
+
+        if (task.getTags() != null) {
+            dto.setTags(task.getTags().stream()
+                    .map(Tag::getName)
+                    .collect(Collectors.toList()));
+        }
 
         return dto;
     }
