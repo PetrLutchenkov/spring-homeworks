@@ -14,7 +14,6 @@ import ru.lutchenkov.taskmanager.model.Task;
 import ru.lutchenkov.taskmanager.service.TaskService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -28,7 +27,7 @@ public class TaskController {
     public ResponseEntity<List<TaskDto>> getAllTasks() {
         List<TaskDto> tasks = taskService.getAllTasks().stream()
                 .map(this::mapToDto)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(tasks);
     }
@@ -83,7 +82,7 @@ public class TaskController {
         if (task.getTags() != null) {
             dto.setTags(task.getTags().stream()
                     .map(Tag::getName)
-                    .collect(Collectors.toList()));
+                    .toList());
         }
 
         return dto;

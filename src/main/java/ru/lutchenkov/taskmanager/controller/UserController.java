@@ -12,7 +12,6 @@ import ru.lutchenkov.taskmanager.model.User;
 import ru.lutchenkov.taskmanager.service.UserService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -25,7 +24,7 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getAllUsers() {
         List<UserDto> users = userService.getAllUsers().stream()
                 .map(this::mapToDto)
-                .collect(Collectors.toList());
+                .toList();
 
         return ResponseEntity.ok(users);
     }
