@@ -1,5 +1,6 @@
 package ru.lutchenkov.taskmanager.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -7,9 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import ru.lutchenkov.taskmanager.dto.ErrorResponse;
-import ru.lutchenkov.taskmanager.exception.TaskNotFoundException;
-
-import jakarta.servlet.http.HttpServletRequest;
+import ru.lutchenkov.taskmanager.exception.ApplicationException;
 import ru.lutchenkov.taskmanager.exception.TooManyRequestsException;
 
 import java.util.List;
@@ -17,8 +16,8 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleTaskNotFound(TaskNotFoundException ex, HttpServletRequest request) {
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException ex, HttpServletRequest request) {
         ErrorResponse response = new ErrorResponse(
                 ex.getMessage(),
                 ex.getErrorCode(),
@@ -76,7 +75,6 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 request.getRequestURI()
         );
-        ex.printStackTrace();
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
