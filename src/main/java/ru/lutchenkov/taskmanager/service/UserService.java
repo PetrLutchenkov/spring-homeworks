@@ -3,7 +3,7 @@ package ru.lutchenkov.taskmanager.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.lutchenkov.taskmanager.exception.TaskNotFoundException;
+import ru.lutchenkov.taskmanager.exception.EmailAlreadyExistsException;
 import ru.lutchenkov.taskmanager.exception.UserNotFoundException;
 import ru.lutchenkov.taskmanager.model.User;
 import ru.lutchenkov.taskmanager.repository.UserRepository;
@@ -26,20 +26,23 @@ public class UserService {
 
     @Transactional
     public User createUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new EmailAlreadyExistsException(user.getEmail());
+        }
         return userRepository.save(user);
     }
 
     @Transactional
     public User updateUser(Long id, User updatedUser) {
         User existingUser = getUserById(id);
-        existingUser.setUsername(updatedUser.getUsername());
+        existingUser.setEmail(updatedUser.getEmail());
         return existingUser;
     }
 
     @Transactional
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new TaskNotFoundException(id);
+            throw new UserNotFoundException(id);
         }
         userRepository.deleteById(id);
     }

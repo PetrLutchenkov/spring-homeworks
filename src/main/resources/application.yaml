@@ -17,3 +17,6 @@ app:
   task:
     cleanup:
       cron: "0 0 3 * * *"
+jwt:
+  secret: ${JWT_SECRET:dGhpcyBpcyBhIHZlcnkgc2VjdXJlIGtleSBmb3IgdGFzayBtYW5hZ2VyIGFwcCAyMDI2}
+  expiration: 1h
