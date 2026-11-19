@@ -38,7 +38,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody CreateUserRequest request) {
         User user = new User();
-        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
 
         User createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(mapToDto(createdUser));
@@ -47,7 +47,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<UserDto> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request) {
         User userData = new User();
-        userData.setUsername(request.getUsername());
+        userData.setEmail(request.getEmail());
 
         User updatedUser = userService.updateUser(id, userData);
         return ResponseEntity.ok(mapToDto(updatedUser));
@@ -62,7 +62,7 @@ public class UserController {
     private UserDto mapToDto(User user) {
         UserDto dto = new UserDto();
         dto.setId(user.getId());
-        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
         return dto;
     }
 
